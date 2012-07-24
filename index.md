@@ -3,6 +3,13 @@ layout: default
 title:  Literate Programming with LDoc 
 ---
 
+## Where can I get it?
+
+The repository is [here](https://github.com/dbindel/ldoc).  You can
+get it by running
+
+    git clone https://github.com/dbindel/ldoc.git
+
 ## What it is
 
 `ldoc` is a minimalist
