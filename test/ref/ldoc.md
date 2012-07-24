@@ -1,5 +1,3 @@
---ldoc
---[[
 % Lua documentation tool
 
 The `ldoc` tool converts a Lua code file with intermixed text
@@ -17,8 +15,8 @@ Each printer object is responsible for implementing `print_code` and
 
 A generic printer class defines the `new` method used to actually
 instantiate new printers.
---]]
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~{.lua}
 Printer = {}
 Printer.__index = Printer
 
@@ -29,13 +27,14 @@ function Printer:new(tbl)
    return tbl
 end
 
---[[
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ## Generic Markdown printer
 
 The default printer generates standard Markdown.  Code is indented
 four spaces; everything else passes through unaltered.
---]]
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~{.lua}
 local MarkdownPrinter = Printer:new()
 
 function MarkdownPrinter:print_code(line)
@@ -46,7 +45,8 @@ function MarkdownPrinter:print_text(line)
    self.fp:write(line .. "\n")
 end
 
---[[
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ## Pandoc Markdown printer
 
 The Pandoc processor recognizes an extension where code regions
@@ -58,8 +58,8 @@ We keep track of whether or not we're in a code block with the
 with the first non-blank code line we encounter.  We skip blank lines
 to avoid completely empty code blocks.  If we are in a code block, we
 exit it the next time we see a text line.
---]]
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~{.lua}
 local PandocPrinter = Printer:new()
 
 function PandocPrinter:print_code(line)
@@ -82,7 +82,8 @@ function PandocPrinter:print_text(line)
    self.fp:write(line .. "\n")
 end
 
---[[
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ## LaTeX printer
 
 The LaTeX processor does two things.  First, it uses the Markdown
@@ -91,8 +92,8 @@ Second, it wraps any code lines in a `verbatim` environment.  You
 could do something fancier with one of the listings environments, but
 I prefer to keep things simple.  In fact, I rather like just using
 Markdown.
---]]
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~{.lua}
 local LatexPrinter = Printer:new()
 
 function LatexPrinter:print_code(line)
@@ -112,7 +113,8 @@ function LatexPrinter:print_text(line)
    self.fp:write(line .. "\n")
 end
 
---[[
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # Processing input files
 
 The `ldoc` documentation tool can be toggled on or off with special
@@ -129,8 +131,8 @@ In Lua, we treat block comments as text and everything outside of
 block comments as code.  We skip the lines where the comment begins
 and ends.  In order to toggle the documentation tool state, we use
 ordinary (not block) comment lines.
---]]
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~{.lua}
 local function ldoc(lname,printer)
    local printing, in_text
    for line in io.lines(lname) do
@@ -153,7 +155,8 @@ local function ldoc(lname,printer)
    printer:print_text("")
 end
 
---[[
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 ## Processing C input files
 
 The C documentation tool can be toggled on or off with a single line
@@ -163,8 +166,8 @@ as the beginning of documentation blocks, and the corresponding
 end-of-comment lines are treated as the end of documentation blocks.
 If there is a leading space-asterisk-space in text lines, we strip
 it away before processing.
---]]
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~{.lua}
 local function cdoc(lname,printer)
    local printing, in_text
    for line in io.lines(lname) do
@@ -190,7 +193,8 @@ local function cdoc(lname,printer)
    printer:print_text("")
 end
 
---[[
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # Main routine
 
 The `main` routine runs a list of files through the `ldoc` processor.
@@ -198,8 +202,8 @@ If the argument list includes something of the form `-o ofname`, then
 output is directed to `ofname`; otherwise, output goes to the standard
 output.  We select a printer using the `-p` option; choices are
 `markdown` and `pandoc`.
---]]
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~{.lua}
 local printers = {
    markdown = MarkdownPrinter,
    pandoc   = PandocPrinter,
@@ -266,3 +270,6 @@ local function main(args)
 end
 
 main {...}
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

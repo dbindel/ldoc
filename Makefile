@@ -1,22 +1,41 @@
-DOCS=doc/ldoc.html
-.PHONY: default html pdf test clean
+LDOC=lua ldoc.lua
+PANDOC=pandoc
+PDFLATEX=pdflatex
 
-default: test
+.PHONY: default test html pdf test clean
 
-html: $(DOCS)
-pdf:  ${DOCS:.html=.pdf}
+default: doc/ldoc.html
+test: doc/ldoc.html doc/luatest.md doc/cctest.md doc/textest.tex
+	diff doc/luatest.md test/ref/luatest.md
+	diff doc/cctest.md test/ref/cctest.md
+	diff doc/textest.tex test/ref/textest.tex
 
-doc/%.md: %.lua
-	lua ldoc.lua -p pandoc -o $@ $^
+html: doc/ldoc.html doc/luatest.html doc/cctest.html
+pdf:  doc/ldoc.pdf doc/luatest.pdf doc/cctest.pdf doc/test.pdf
+
+doc/ldoc.md: ldoc.lua
+	$(LDOC) -p pandoc -attribs '.lua' -o $@ $<
+
+doc/luatest.md: test/luatest.lua
+	$(LDOC) -p pandoc -attribs '.lua' -o $@ $<
+
+doc/cctest.md: test/cctest.cc
+	$(LDOC) -p pandoc -attribs '.c' -o $@ $<
+
+doc/textest.tex: test/textest.cc
+	lua ldoc.lua -p latex -class article -o $@ $<
+
+doc/test.pdf: doc/test.tex doc/textest.tex
+	(cd doc; $(PDFLATEX) test.tex)
 
 %.pdf: %.md
-	pandoc $< -o $@
+	$(PANDOC) $< -o $@
 
 %.html: %.md
-	pandoc $< -s --toc -c pandoc.css \
+	$(PANDOC) $< -s --toc -c pandoc.css \
 		--highlight-style pygments -o $@
 
 clean:
-	rm -f doc/*.html doc/*.pdf doc/*.md
+	rm -f doc/*.html doc/*.pdf doc/*.md doc/textest.tex
+	rm -f doc/test.log doc/test.aux doc/test.pdf
 	rm -f *~
-	rm -f test/*~
