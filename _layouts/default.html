@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">  
+    <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
+    {% if page.description %}
+    <meta name="description" content="{{ page.description }}" />
+    {% endif %}
+    <meta name="author" content="{{ site.author }}">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" media="screen" href="{{ site.baseurl }}/stylesheets/styles.css" type="text/css" />
+    {% if site.feedburner %}
+    <link href="http://feeds.feedburner.com/{{ site.feedburner.id }}" rel="alternate" title="{{ site.title }}" type="application/atom+xml" />
+    {% endif %}
+    {% if site.google_analytics %}
+    <!-- google analytics async -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', '{{ site.google_analytics.account }}']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    {% endif %}
+
+    <!-- mathjax config similar to math.stackexchange -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+      jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+          inlineMath: [['$', '$']],
+          displayMath: [['$$', '$$']],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        },
+      messageStyle: "none",
+      "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
+    });
+    </script>
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script> 
+
+  </head>
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <nav class="container">
+          <a class="brand" href="#">Eigenmumbles</a>
+          <ul class="nav">
+            <li><a href="{{ site.baseurl }}/">Home</a></li>
+            <li><a href="{{ site.baseurl }}/about.html">About</a></li>
+            <li><a href="{{ site.baseurl }}/archive.html">Archive</a></li>
+          </ul>
+          <form method="get" action="http://www.google.com/search" class="pull-right">
+            <input class="input-small" type="text" name="q" size="31" maxlength="255" value="">
+            <input name="sitesearch" type="hidden" value="{{ site.domain }}">
+            <button class="btn" type="submit">Search</button>
+          </form>
+        </nav>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="content">
+        <header class="page-header">
+          <h1>{{ site.title }}</h1>
+        </header>
+        <div class="row">
+          <div id="content" class="span12">
+            {{ content }}
+          </div>
+          <nav class="span4">
+            <h3>Recent Posts</h3>
+            <div id="posts">
+              {% for post in site.posts limit:10%}
+                <p><a href="{{ site.baseurl }}/{{ post.url }}">{{ post.title }}</a></p>
+              {% endfor %}
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <footer>
+        <p>powered by <a href="https://github.com/mojombo/jekyll">jekyll</a></p>
+      </footer>
+
+    </div> 
+
+
+  {% if site.github %}
+    <a href="http://github.com/{{ site.github.username }}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub" /></a>
+  {% endif %}
+  </body>
+</html>
