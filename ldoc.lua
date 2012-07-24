@@ -83,6 +83,35 @@ function PandocPrinter:print_text(line)
 end
 
 --[[
+## GitHub Markdown printer with Liquid
+
+The GitHub Liquid templating engine can do syntax highlighting with 
+Pygments using highlight tags.  Use the `highlight` argument to specify
+the language.
+--]]
+
+local GithubPrinter = Printer:new()
+
+function GithubPrinter:print_code(line)
+   if not self.in_code and string.find(line, "%S") then
+      if not self.highlight then
+         error("highlight must be defined for Github markdown")
+      end
+      self.fp:write("\n{% highlight " .. self.highlight .. "%}\n")
+      self.in_code = true
+   end
+   if self.in_code then self.fp:write(line .. "\n") end
+end
+
+function GithubPrinter:print_text(line)
+   if self.in_code then
+      self.fp:write("{% endhighlight %}\n\n")
+      self.in_code = false
+   end
+   self.fp:write(line .. "\n")
+end
+
+--[[
 ## LaTeX printer
 
 The LaTeX processor does two things.  First, it uses the Markdown
@@ -203,7 +232,8 @@ output.  We select a printer using the `-p` option; choices are
 local printers = {
    markdown = MarkdownPrinter,
    pandoc   = PandocPrinter,
-   latex    = LatexPrinter
+   latex    = LatexPrinter,
+   github   = GithubPrinter
 }
 
 local processors = {

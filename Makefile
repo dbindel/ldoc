@@ -5,9 +5,11 @@ PDFLATEX=pdflatex
 .PHONY: default test html pdf test clean
 
 default: doc/ldoc.html
-test: doc/ldoc.html doc/luatest.md doc/cctest.md doc/textest.tex
+test: doc/ldoc.html doc/luatest.md doc/cctest.md doc/cctestg.md \
+	doc/textest.tex
 	diff doc/luatest.md test/ref/luatest.md
 	diff doc/cctest.md test/ref/cctest.md
+	diff doc/cctestg.md test/ref/cctestg.md
 	diff doc/textest.tex test/ref/textest.tex
 
 html: doc/ldoc.html doc/luatest.html doc/cctest.html
@@ -21,6 +23,9 @@ doc/luatest.md: test/luatest.lua
 
 doc/cctest.md: test/cctest.cc
 	$(LDOC) -p pandoc -attribs '.c' -o $@ $<
+
+doc/cctestg.md: test/cctest.cc
+	$(LDOC) -p github -highlight cc -o $@ $<
 
 doc/textest.tex: test/textest.cc
 	lua ldoc.lua -p latex -class article -o $@ $<
