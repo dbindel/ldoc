@@ -2,9 +2,11 @@ LDOC=lua ldoc.lua
 PANDOC=pandoc
 PDFLATEX=pdflatex
 
-.PHONY: default test html pdf test clean
+.PHONY: default test html pdf gh clean
 
-default: doc/ldoc.html
+default: 
+	$(LDOC) ldoc.lua -o ldoc.md
+	
 test: doc/ldoc.html doc/luatest.md doc/cctest.md doc/cctestg.md \
 	doc/textest.tex
 	diff doc/luatest.md test/ref/luatest.md
@@ -14,6 +16,15 @@ test: doc/ldoc.html doc/luatest.md doc/cctest.md doc/cctestg.md \
 
 html: doc/ldoc.html doc/luatest.html doc/cctest.html
 pdf:  doc/ldoc.pdf doc/luatest.pdf doc/cctest.pdf doc/test.pdf
+
+gh:
+	$(LDOC) -p github -highlight lua ldoc.lua -o ldoc-gh.md
+	echo "---" > ldoc.md
+	echo "layout: default" >> ldoc.md
+	echo "title: ldoc source" >> ldoc.md
+	echo "---" >> ldoc.md
+	awk '!/^%/ { print}' ldoc-gh.md >> ldoc.md
+	rm -f ldoc-gh.md
 
 doc/ldoc.md: ldoc.lua
 	$(LDOC) -p pandoc -attribs '.lua' -o $@ $<

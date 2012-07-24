@@ -97,7 +97,7 @@ function GithubPrinter:print_code(line)
       if not self.highlight then
          error("highlight must be defined for Github markdown")
       end
-      self.fp:write("\n{% highlight " .. self.highlight .. "%}\n")
+      self.fp:write("\n{% highlight " .. self.highlight .. " %}\n")
       self.in_code = true
    end
    if self.in_code then self.fp:write(line .. "\n") end
