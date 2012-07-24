@@ -15,6 +15,8 @@
     <![endif]-->
 
     <link rel="stylesheet" media="screen" href="{{ site.baseurl }}/stylesheets/styles.css" type="text/css" />
+    <link rel="stylesheet" media="screen" href="{{ site.baseurl }}/stylesheets/syntax.css" type="text/css" />
+
     {% if site.feedburner %}
     <link href="http://feeds.feedburner.com/{{ site.feedburner.id }}" rel="alternate" title="{{ site.title }}" type="application/atom+xml" />
     {% endif %}
@@ -32,42 +34,8 @@
     </script>
     {% endif %}
 
-    <!-- mathjax config similar to math.stackexchange -->
-    <script type="text/x-mathjax-config">
-      MathJax.Hub.Config({
-      jax: ["input/TeX", "output/HTML-CSS"],
-        tex2jax: {
-          inlineMath: [['$', '$']],
-          displayMath: [['$$', '$$']],
-          processEscapes: true,
-          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-        },
-      messageStyle: "none",
-      "HTML-CSS": { preferredFont: "TeX", availableFonts: ["STIX","TeX"] }
-    });
-    </script>
-    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML" type="text/javascript"></script> 
-
   </head>
   <body>
-
-    <div class="topbar">
-      <div class="fill">
-        <nav class="container">
-          <a class="brand" href="#">Eigenmumbles</a>
-          <ul class="nav">
-            <li><a href="{{ site.baseurl }}/">Home</a></li>
-            <li><a href="{{ site.baseurl }}/about.html">About</a></li>
-            <li><a href="{{ site.baseurl }}/archive.html">Archive</a></li>
-          </ul>
-          <form method="get" action="http://www.google.com/search" class="pull-right">
-            <input class="input-small" type="text" name="q" size="31" maxlength="255" value="">
-            <input name="sitesearch" type="hidden" value="{{ site.domain }}">
-            <button class="btn" type="submit">Search</button>
-          </form>
-        </nav>
-      </div>
-    </div>
 
     <div class="container">
 
@@ -76,17 +44,9 @@
           <h1>{{ site.title }}</h1>
         </header>
         <div class="row">
-          <div id="content" class="span12">
+          <div id="content" class="span10 offset2">
             {{ content }}
           </div>
-          <nav class="span4">
-            <h3>Recent Posts</h3>
-            <div id="posts">
-              {% for post in site.posts limit:10%}
-                <p><a href="{{ site.baseurl }}/{{ post.url }}">{{ post.title }}</a></p>
-              {% endfor %}
-            </div>
-          </nav>
         </div>
       </div>
 

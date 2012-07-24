@@ -5,7 +5,7 @@ baseurl:   http://dbindel.github.com/ldoc
 permalink: date
 pygments: true
 exclude: ['Rakefile', 'README.md']
-markdown: kramdown
+# markdown: kramdown
 
 # configuration required for some pages
 

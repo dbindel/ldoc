@@ -1,6 +1,6 @@
 ---
 layout: default
-title:  LDoc: A Literate Programming Tool
+title:  Literate Programming with `ldoc`
 ---
 
 ## What it is

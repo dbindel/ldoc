@@ -1,7 +1,7 @@
---
+---
 layout: default
-title: `ldoc` source
---
+title: ldoc source
+---
 
 The `ldoc` tool converts a Lua code file with intermixed text
 documentation (in comments) into a markup language (Markdown).
@@ -19,7 +19,7 @@ Each printer object is responsible for implementing `print_code` and
 A generic printer class defines the `new` method used to actually
 instantiate new printers.
 
-{% highlight lua%}
+{% highlight lua %}
 Printer = {}
 Printer.__index = Printer
 
@@ -37,7 +37,7 @@ end
 The default printer generates standard Markdown.  Code is indented
 four spaces; everything else passes through unaltered.
 
-{% highlight lua%}
+{% highlight lua %}
 local MarkdownPrinter = Printer:new()
 
 function MarkdownPrinter:print_code(line)
@@ -62,7 +62,7 @@ with the first non-blank code line we encounter.  We skip blank lines
 to avoid completely empty code blocks.  If we are in a code block, we
 exit it the next time we see a text line.
 
-{% highlight lua%}
+{% highlight lua %}
 local PandocPrinter = Printer:new()
 
 function PandocPrinter:print_code(line)
@@ -93,7 +93,7 @@ The GitHub Liquid templating engine can do syntax highlighting with
 Pygments using highlight tags.  Use the `highlight` argument to specify
 the language.
 
-{% highlight lua%}
+{% highlight lua %}
 local GithubPrinter = Printer:new()
 
 function GithubPrinter:print_code(line)
@@ -101,7 +101,7 @@ function GithubPrinter:print_code(line)
       if not self.highlight then
          error("highlight must be defined for Github markdown")
       end
-      self.fp:write("\n{% highlight " .. self.highlight .. "%}\n")
+      self.fp:write("\n{% highlight " .. self.highlight .. " %}\n")
       self.in_code = true
    end
    if self.in_code then self.fp:write(line .. "\n") end
@@ -126,7 +126,7 @@ could do something fancier with one of the listings environments, but
 I prefer to keep things simple.  In fact, I rather like just using
 Markdown.
 
-{% highlight lua%}
+{% highlight lua %}
 local LatexPrinter = Printer:new()
 
 function LatexPrinter:print_code(line)
@@ -165,7 +165,7 @@ block comments as code.  We skip the lines where the comment begins
 and ends.  In order to toggle the documentation tool state, we use
 ordinary (not block) comment lines.
 
-{% highlight lua%}
+{% highlight lua %}
 local function ldoc(lname,printer)
    local printing, in_text
    for line in io.lines(lname) do
@@ -200,7 +200,7 @@ end-of-comment lines are treated as the end of documentation blocks.
 If there is a leading space-asterisk-space in text lines, we strip
 it away before processing.
 
-{% highlight lua%}
+{% highlight lua %}
 local function cdoc(lname,printer)
    local printing, in_text
    for line in io.lines(lname) do
@@ -236,7 +236,7 @@ output is directed to `ofname`; otherwise, output goes to the standard
 output.  We select a printer using the `-p` option; choices are
 `markdown` and `pandoc`.
 
-{% highlight lua%}
+{% highlight lua %}
 local printers = {
    markdown = MarkdownPrinter,
    pandoc   = PandocPrinter,
