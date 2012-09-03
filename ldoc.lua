@@ -220,6 +220,37 @@ local function cdoc(lname,printer)
 end
 
 --[[
+## Processing MATLAB input files
+
+The MATLAB documentation tool can be toggled on or off with a line
+beginning with `%ldoc`.  Subsequently, comment blocks beginning with
+a double percent are treated as the beginning of documentation blocks,
+which are ended at the first non-comment line.
+--]]
+
+local function mdoc(lname,printer)
+   local printing, in_text
+   for line in io.lines(lname) do
+      if string.find(line, "%%ldoc on") == 1 then
+         printing = true
+      elseif string.find(line, "%%ldoc off") == 1 then
+         printing = false
+      elseif string.find(line, "%%ldoc") == 1 then
+         printing = not printing
+      elseif string.find(line, "%%%%%s*$") == 1 then
+         in_text = true
+      elseif in_text and string.find(line, "%%") ~= 1 then
+         in_text = false
+      elseif printing then
+         if in_text then printer:print_text(string.gsub(line, "^%%%s?", ""))
+         else            printer:print_code(line)
+         end
+      end
+   end
+   printer:print_text("")
+end
+
+--[[
 # Main routine
 
 The `main` routine runs a list of files through the `ldoc` processor.
@@ -242,7 +273,8 @@ local processors = {
    h   = cdoc,
    cc  = cdoc,
    cpp = cdoc,
-   C   = cdoc
+   C   = cdoc,
+   m   = mdoc
 }
 
 local function main(args)
