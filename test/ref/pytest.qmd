@@ -1,0 +1,17 @@
+---
+title: "Hello, Quarto"
+format: 
+  pdf:
+    documentclass: article
+---
+## Code Cell
+
+Here is a Python code cell:
+
+```{python}
+import os
+os.cpu_count()
+
+```
+
+

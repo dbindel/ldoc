@@ -1,5 +1,6 @@
 LDOC=lua ldoc.lua
 PANDOC=pandoc
+QUARTO=quarto
 PDFLATEX=pdflatex
 
 .PHONY: default test html pdf gh clean
@@ -8,12 +9,13 @@ default:
 	$(LDOC) ldoc.lua -o ldoc.md
 	
 test: doc/ldoc.html doc/luatest.md doc/cctest.md doc/cctestg.md \
-	doc/mtest.md doc/textest.tex
+	doc/mtest.md doc/textest.tex doc/pytest.qmd
 	diff doc/luatest.md test/ref/luatest.md
 	diff doc/cctest.md test/ref/cctest.md
 	diff doc/cctestg.md test/ref/cctestg.md
 	diff doc/mtest.md test/ref/mtest.md
 	diff doc/textest.tex test/ref/textest.tex
+	diff doc/pytest.qmd test/ref/pytest.qmd
 
 html: doc/ldoc.html doc/luatest.html doc/cctest.html doc/mtest.html
 pdf:  doc/ldoc.pdf doc/luatest.pdf doc/cctest.pdf doc/mtest.html doc/test.pdf
@@ -45,8 +47,14 @@ doc/mtest.md: test/mtest.m
 doc/textest.tex: test/textest.cc
 	$(LDOC) -p latex -class article -o $@ $<
 
+doc/pytest.qmd: test/pytest.py
+	$(LDOC) -p quarto -exec python -o $@ $<
+
 doc/test.pdf: doc/test.tex doc/textest.tex
 	(cd doc; $(PDFLATEX) test.tex)
+
+doc/pytest.pdf: doc/pytest.qmd
+	(cd doc; $(QUARTO) render pytest.qmd)
 
 %.pdf: %.md
 	$(PANDOC) $< -o $@
@@ -56,6 +64,6 @@ doc/test.pdf: doc/test.tex doc/textest.tex
 		--highlight-style pygments -o $@
 
 clean:
-	rm -f doc/*.html doc/*.pdf doc/*.md doc/textest.tex
-	rm -f doc/test.log doc/test.aux doc/test.pdf
+	rm -f doc/*.html doc/*.pdf doc/*.md doc/*.qmd doc/textest.tex
+	rm -f doc/test.log doc/test.aux doc/test.pdf 
 	rm -f *~

@@ -112,6 +112,39 @@ function GithubPrinter:print_text(line)
 end
 
 --[[
+## Quarto Markdown printer
+
+Quarto fences code with triple backticks.  Use the `highlight` argument
+to specify the language for highlighting, as with GitHub Liquid templating.
+Use the `exec` argument to compile to something that will actually be run
+via the Quarto processor.
+--]]
+
+local QuartoPrinter = Printer:new()
+
+function QuartoPrinter:print_code(line)
+   if not self.in_code and string.find(line, "%S") then
+      self.fp:write("\n```")
+      if self.exec then
+         self.fp:write("{" .. self.exec .. "}")
+      elseif self.highlight then
+         self.fp:write("{." .. self.highlight .. "}")
+      end
+      self.fp:write("\n")
+      self.in_code = true
+   end
+   if self.in_code then self.fp:write(line .. "\n") end
+end
+
+function QuartoPrinter:print_text(line)
+   if self.in_code then
+      self.fp:write("```\n\n")
+      self.in_code = false
+   end
+   self.fp:write(line .. "\n")
+end
+
+--[[
 ## LaTeX printer
 
 The LaTeX processor does two things.  First, it uses the Markdown
@@ -220,6 +253,37 @@ local function cdoc(lname,printer)
 end
 
 --[[
+## Processing Julia input files
+
+In Julia, we treat block comments as text and everything outside of
+block comments as code.  We skip the lines where the comment begins
+and ends.  In order to toggle the documentation tool state, we use
+ordinary (not block) comment lines.
+--]]
+
+local function jdoc(lname,printer)
+   local printing, in_text
+   for line in io.lines(lname) do
+      if string.find(line, "%s*#ldoc%s+on") == 1 then
+         printing = true
+      elseif string.find(line, "%s*#ldoc%s+off") == 1 then
+         printing = false
+      elseif string.find(line, "%s*#ldoc") == 1 then
+         printing = not printing
+      elseif string.find(line, "%s*#=") == 1 then
+         in_text = true
+      elseif string.find(line, "%s*=#") == 1 then
+         in_text = false
+      elseif printing then
+         if in_text then printer:print_text(line)
+         else            printer:print_code(line)
+         end
+      end
+   end
+   printer:print_text("")
+end
+
+--[[
 ## Processing MATLAB input files
 
 The MATLAB documentation tool can be toggled on or off with a line
@@ -251,6 +315,37 @@ local function mdoc(lname,printer)
 end
 
 --[[
+## Processing shell input files
+
+The shell-style documentation tool can be toggled with a line
+beginning with `#ldoc`.  Subsequently, comment blocks beginning with
+a `#-` are treated as the beginning of documentation blocks,
+which are ended at the first non-comment line.
+--]]
+
+local function shdoc(lname,printer)
+   local printing, in_text
+   for line in io.lines(lname) do
+      if string.find(line, "#ldoc on") == 1 then
+         printing = true
+      elseif string.find(line, "#ldoc off") == 1 then
+         printing = false
+      elseif string.find(line, "#ldoc") == 1 then
+         printing = not printing
+      elseif string.find(line, "#%-%s*$") == 1 then
+         in_text = true
+      elseif in_text and string.find(line, "#") ~= 1 then
+         in_text = false
+      elseif printing then
+         if in_text then printer:print_text(string.gsub(line, "^#%s?", ""))
+         else            printer:print_code(line)
+         end
+      end
+   end
+   printer:print_text("")
+end
+
+--[[
 # Main routine
 
 The `main` routine runs a list of files through the `ldoc` processor.
@@ -263,6 +358,7 @@ output.  We select a printer using the `-p` option; choices are
 local printers = {
    markdown = MarkdownPrinter,
    pandoc   = PandocPrinter,
+   quarto   = QuartoPrinter,
    latex    = LatexPrinter,
    github   = GithubPrinter
 }
@@ -274,7 +370,12 @@ local processors = {
    cc  = cdoc,
    cpp = cdoc,
    C   = cdoc,
-   m   = mdoc
+   jl  = jdoc,
+   m   = mdoc,
+   sh  = shdoc,
+   csh = shdoc,
+   zsh = shdoc,
+   py  = shdoc
 }
 
 local function main(args)
