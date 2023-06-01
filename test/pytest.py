@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #ldoc
 
-#-
+##
 # ---
 # title: "Hello, Quarto"
 # format: 
@@ -9,7 +9,7 @@
 #     documentclass: article
 # ---
 
-#-
+##
 # ## Code Cell
 #
 # Here is a Python code cell:

@@ -319,7 +319,7 @@ end
 
 The shell-style documentation tool can be toggled with a line
 beginning with `#ldoc`.  Subsequently, comment blocks beginning with
-a `#-` are treated as the beginning of documentation blocks,
+a `##` are treated as the beginning of documentation blocks,
 which are ended at the first non-comment line.
 --]]
 
@@ -332,7 +332,7 @@ local function shdoc(lname,printer)
          printing = false
       elseif string.find(line, "#ldoc") == 1 then
          printing = not printing
-      elseif string.find(line, "#%-%s*$") == 1 then
+      elseif string.find(line, "##%s*$") == 1 then
          in_text = true
       elseif in_text and string.find(line, "#") ~= 1 then
          in_text = false

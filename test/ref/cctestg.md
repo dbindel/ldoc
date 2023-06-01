@@ -5,7 +5,7 @@ example.  Let's pretend that we're documenting a class!
 
 ## A very stupid class
 
-{% highlight cc%}
+{% highlight cc %}
 /*
  * This is an ordinary block comment that should not be touched by
  * the ldoc processor.
@@ -24,7 +24,7 @@ private:
 
 Ideally, we should lose the initial space-star-space after processing.
 
-{% highlight cc%}
+{% highlight cc %}
 int main()
 {
     return 0;
