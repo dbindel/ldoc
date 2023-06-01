@@ -9,13 +9,14 @@ default:
 	$(LDOC) ldoc.lua -o ldoc.md
 	
 test: doc/ldoc.html doc/luatest.md doc/cctest.md doc/cctestg.md \
-	doc/mtest.md doc/textest.tex doc/pytest.qmd
+	doc/mtest.md doc/textest.tex doc/pytest.qmd doc/jltest.qmd
 	diff doc/luatest.md test/ref/luatest.md
 	diff doc/cctest.md test/ref/cctest.md
 	diff doc/cctestg.md test/ref/cctestg.md
 	diff doc/mtest.md test/ref/mtest.md
 	diff doc/textest.tex test/ref/textest.tex
 	diff doc/pytest.qmd test/ref/pytest.qmd
+	diff doc/jltest.qmd test/ref/jltest.qmd
 
 html: doc/ldoc.html doc/luatest.html doc/cctest.html doc/mtest.html
 pdf:  doc/ldoc.pdf doc/luatest.pdf doc/cctest.pdf doc/mtest.html doc/test.pdf
@@ -50,11 +51,17 @@ doc/textest.tex: test/textest.cc
 doc/pytest.qmd: test/pytest.py
 	$(LDOC) -p quarto -exec python -o $@ $<
 
+doc/jltest.qmd: test/jltest.jl
+	$(LDOC) -p quarto -exec julia -o $@ $<
+
 doc/test.pdf: doc/test.tex doc/textest.tex
 	(cd doc; $(PDFLATEX) test.tex)
 
 doc/pytest.pdf: doc/pytest.qmd
 	(cd doc; $(QUARTO) render pytest.qmd)
+
+doc/jltest.pdf: doc/jltest.qmd
+	(cd doc; $(QUARTO) render jltest.qmd)
 
 %.pdf: %.md
 	$(PANDOC) $< -o $@

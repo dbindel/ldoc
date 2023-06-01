@@ -1,0 +1,23 @@
+---
+title: "Hello, Quarto"
+pdf-engine: lualatex
+format: 
+  pdf:
+    documentclass: article
+    monofont: DejaVu Sans Mono
+---
+
+## Code Cell
+
+Here is a Julia code cell:
+
+```{julia}
+using LinearAlgebra
+γ = 1.5
+A = [1.0 2.0; 3.0 4.0]
+b = [3.0; 7.0]
+A\b, γ
+
+```
+
+
